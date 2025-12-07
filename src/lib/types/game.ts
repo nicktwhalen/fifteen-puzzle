@@ -1,5 +1,6 @@
 export interface BoardProps {
   tiles: Tile[];
+  tileImages: string[];
   isWon: boolean;
   onTileClick: (index: number) => void;
 }
@@ -10,6 +11,7 @@ export interface Tile {
 
 export interface TileProps {
   id: number;
+  image?: string;
   onClick: () => void;
   canMove: boolean;
 }

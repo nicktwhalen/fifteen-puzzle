@@ -13,6 +13,15 @@
   touch-action: manipulation;
 }
 
+.tileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
 .empty {
   border: 0;
   background: transparent;

@@ -6,6 +6,7 @@ import styles from "./Game.module.css";
 import { EMPTY_TILE } from "@/lib/types/game";
 import dynamic from "next/dynamic";
 import { shuffleTiles } from "@/lib/utils/shuffle";
+import { splitImageIntoTiles } from "@/lib/utils/imageProcessor";
 
 const ConfettiExplosion = dynamic(() => import("react-confetti-explosion"), {
   ssr: false,
@@ -15,10 +16,25 @@ export function Game() {
     Array.from({ length: 16 }, (_, i) => ({ id: i }))
   );
 
+  const [tileImages, setTileImages] = useState<string[]>([]);
+
   useEffect(() => {
+    async function loadImage() {
+      const images = await splitImageIntoTiles("/puzzle-image.png");
+      setTileImages(images);
+    }
+    loadImage();
+  }, []);
+
+  useEffect(() => {
+    if (tileImages.length === 0) return;
+    // TODO: after final testing, remove next 3 commented lines
+    // const newTiles = [...tiles];
+    // [newTiles[14], newTiles[15]] = [newTiles[15]!, newTiles[14]!];
+    // setTiles(newTiles);
     setTiles((prev) => shuffleTiles(prev));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tileImages]);
 
   const isWon = useMemo(
     () => tiles.every((tile, index) => tile.id === index),
@@ -66,7 +82,12 @@ export function Game() {
           {/* <button className={styles.button}>Upload</button>
           <button className={styles.button}>Hint</button> */}
         </div>
-        <Board tiles={tiles} onTileClick={handleTileClick} isWon={isWon} />
+        <Board
+          tiles={tiles}
+          tileImages={tileImages}
+          onTileClick={handleTileClick}
+          isWon={isWon}
+        />
       </div>
     </>
   );

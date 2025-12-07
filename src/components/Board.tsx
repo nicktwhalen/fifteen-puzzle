@@ -5,7 +5,7 @@ import styles from "./Board.module.css";
 import { useMemo } from "react";
 import { BoardProps, EMPTY_TILE } from "@/lib/types/game";
 
-export function Board({ tiles, onTileClick, isWon }: BoardProps) {
+export function Board({ tiles, tileImages, onTileClick, isWon }: BoardProps) {
   const emptyIndex = useMemo(
     () => tiles.findIndex((t) => t.id === EMPTY_TILE),
     [tiles]
@@ -23,6 +23,7 @@ export function Board({ tiles, onTileClick, isWon }: BoardProps) {
         <Tile
           key={tile.id}
           id={tile.id}
+          image={tileImages[tile.id]}
           onClick={() => onTileClick(index)}
           canMove={!isWon && canMove(index)}
         />
