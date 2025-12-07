@@ -28,10 +28,6 @@ export function Game() {
 
   useEffect(() => {
     if (tileImages.length === 0) return;
-    // TODO: after final testing, remove next 3 commented lines
-    // const newTiles = [...tiles];
-    // [newTiles[14], newTiles[15]] = [newTiles[15]!, newTiles[14]!];
-    // setTiles(newTiles);
     setTiles((prev) => shuffleTiles(prev));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tileImages]);
@@ -48,6 +44,28 @@ export function Game() {
 
   function handleShuffleClick() {
     setTiles((prev) => shuffleTiles(prev));
+  }
+
+  async function handleUploadClick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      console.error("Please select an image file");
+      return;
+    }
+
+    try {
+      const imageUrl = URL.createObjectURL(file);
+      const images = await splitImageIntoTiles(imageUrl);
+      setTileImages(images);
+      URL.revokeObjectURL(imageUrl);
+      setTiles((prev) => shuffleTiles(prev));
+    } catch (error) {
+      console.error("Failed to process image:", error);
+    }
+
+    event.target.value = "";
   }
 
   function handleTileClick(index: number) {
@@ -79,8 +97,17 @@ export function Game() {
           <button className={styles.button} onClick={handleShuffleClick}>
             Shuffle
           </button>
-          {/* <button className={styles.button}>Upload</button>
-          <button className={styles.button}>Hint</button> */}
+          <label htmlFor="image-upload" className={styles.button}>
+            Upload Image
+          </label>
+          <input
+            type="file"
+            id="image-upload"
+            accept="image/*"
+            onChange={handleUploadClick}
+            style={{ display: "none" }}
+          />
+          {/* <button className={styles.button}>Hint</button> */}
         </div>
         <Board
           tiles={tiles}

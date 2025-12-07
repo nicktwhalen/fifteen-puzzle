@@ -1,5 +1,6 @@
+/* thank you, Claude */
 export async function splitImageIntoTiles(
-  imagePath: string
+  imageSource: string | File
 ): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -43,6 +44,12 @@ export async function splitImageIntoTiles(
     };
 
     img.onerror = () => reject(new Error("Failed to load image"));
-    img.src = imagePath;
+
+    // Handle both string paths and File objects
+    if (typeof imageSource === "string") {
+      img.src = imageSource;
+    } else {
+      img.src = URL.createObjectURL(imageSource);
+    }
   });
 }
