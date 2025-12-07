@@ -8,36 +8,3 @@
   user-select: none;
   overscroll-behavior: contain;
 }
-
-.shuffleButton {
-  padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px);
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-  font-weight: bold;
-  border: 2px solid white;
-  border-radius: clamp(4px, 1vw, 8px);
-  background: transparent;
-  color: white;
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  margin-bottom: 1rem;
-}
-
-.shuffleButton:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
-}
-
-.shuffleButton:active {
-  transform: scale(0.98);
-}
-
-.confettiWrapper {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  pointer-events: none;
-}
