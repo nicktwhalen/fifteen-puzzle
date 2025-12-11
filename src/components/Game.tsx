@@ -1,44 +1,44 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Board } from "./Board";
 import styles from "./Game.module.css";
 import { EMPTY_TILE } from "@/lib/types/game";
 import dynamic from "next/dynamic";
 import { shuffleTiles } from "@/lib/utils/shuffle";
 import { splitImageIntoTiles } from "@/lib/utils/imageProcessor";
+import { solvePuzzle } from "@/lib/utils/solver";
 
 const ConfettiExplosion = dynamic(() => import("react-confetti-explosion"), {
   ssr: false,
 });
 export function Game() {
   const [tiles, setTiles] = useState(
-    Array.from({ length: 16 }, (_, i) => ({ id: i }))
+    Array.from({ length: 16 }, (_, i) => (i < 15 ? i + 1 : EMPTY_TILE))
   );
-
   const [tileImages, setTileImages] = useState<string[]>([]);
+  const hasShuffled = useRef(false);
 
   useEffect(() => {
-    async function loadImage() {
+    if (hasShuffled.current) return;
+
+    async function loadImageAndShuffle() {
       const images = await splitImageIntoTiles("/puzzle-image.png");
       setTileImages(images);
+      setTiles((prev) => shuffleTiles(prev));
+      hasShuffled.current = true;
     }
-    loadImage();
+
+    loadImageAndShuffle();
   }, []);
 
-  useEffect(() => {
-    if (tileImages.length === 0) return;
-    setTiles((prev) => shuffleTiles(prev));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tileImages]);
-
   const isWon = useMemo(
-    () => tiles.every((tile, index) => tile.id === index),
+    () => tiles.every((tile, index) => tile === (index + 1) % 16),
     [tiles]
   );
 
   const emptyIndex = useMemo(
-    () => tiles.findIndex((t) => t.id === EMPTY_TILE),
+    () => tiles.findIndex((tile) => tile === EMPTY_TILE),
     [tiles]
   );
 
@@ -66,6 +66,14 @@ export function Game() {
     }
 
     event.target.value = "";
+  }
+
+  function handleHintClick() {
+    if (isWon) return;
+
+    const steps = solvePuzzle(tiles);
+    console.log(steps);
+    setTiles(steps[1]!);
   }
 
   function handleTileClick(index: number) {
@@ -107,10 +115,12 @@ export function Game() {
             onChange={handleUploadClick}
             style={{ display: "none" }}
           />
-          {/* <button className={styles.button}>Hint</button> */}
+          <button className={styles.button} onClick={handleHintClick}>
+            Hint
+          </button>
         </div>
         <Board
-          tiles={tiles}
+          board={tiles}
           tileImages={tileImages}
           onTileClick={handleTileClick}
           isWon={isWon}

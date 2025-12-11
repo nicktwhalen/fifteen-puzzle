@@ -1,12 +1,14 @@
+export type Board = number[];
+
+export const EMPTY_TILE = 0;
+
+export const MAX_DIFFICULTY = 15;
+
 export interface BoardProps {
-  tiles: Tile[];
+  board: Board;
   tileImages: string[];
   isWon: boolean;
   onTileClick: (index: number) => void;
-}
-
-export interface Tile {
-  id: number;
 }
 
 export interface TileProps {
@@ -15,5 +17,3 @@ export interface TileProps {
   onClick: () => void;
   canMove: boolean;
 }
-
-export const EMPTY_TILE = 15;

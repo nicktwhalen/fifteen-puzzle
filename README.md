@@ -21,6 +21,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Development
 
 ```bash
+# Run tests
+yarn test
+
 # Type checking
 yarn type-check
 

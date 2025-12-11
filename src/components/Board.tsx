@@ -5,10 +5,10 @@ import styles from "./Board.module.css";
 import { useMemo } from "react";
 import { BoardProps, EMPTY_TILE } from "@/lib/types/game";
 
-export function Board({ tiles, tileImages, onTileClick, isWon }: BoardProps) {
+export function Board({ board, tileImages, onTileClick, isWon }: BoardProps) {
   const emptyIndex = useMemo(
-    () => tiles.findIndex((t) => t.id === EMPTY_TILE),
-    [tiles]
+    () => board.findIndex((tile) => tile === EMPTY_TILE),
+    [board]
   );
 
   function canMove(index: number): boolean {
@@ -19,11 +19,11 @@ export function Board({ tiles, tileImages, onTileClick, isWon }: BoardProps) {
 
   return (
     <div className={styles.board}>
-      {tiles.map((tile, index) => (
+      {board.map((tile, index) => (
         <Tile
-          key={tile.id}
-          id={tile.id}
-          image={tileImages[tile.id]}
+          key={tile}
+          id={tile}
+          image={tile === EMPTY_TILE ? undefined : tileImages[tile - 1]}
           onClick={() => onTileClick(index)}
           canMove={!isWon && canMove(index)}
         />
